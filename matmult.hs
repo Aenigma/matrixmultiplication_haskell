@@ -22,7 +22,7 @@ matPrettyPrint mat = intercalate "\n"
     ++ "]"
   | row <- mat ]
 
-main = withFile "COSC450_P1_Data.txt" ReadMode (\ handle ->
+main = withFile "COSC450_P2_Data.txt" ReadMode (\ handle ->
      do contents <- hGetContents handle
         let l = wordsToInteger $ wordSplit contents
         let (l1, l2) = splitHalf l
@@ -34,6 +34,19 @@ main = withFile "COSC450_P1_Data.txt" ReadMode (\ handle ->
         let mat2 = splitNList l2 size2
 
         let mat3 = matMult mat1 mat2
+
+        withFile "COSC450_P2_Output.txt" WriteMode (\hwrite ->
+          do
+          hPutStrLn hwrite "Matrix 1"
+          hPutStrLn hwrite $ matPrettyPrint mat1
+          hPutStrLn hwrite []
+          hPutStrLn hwrite "Matrix 2"
+          hPutStrLn hwrite $ matPrettyPrint mat2
+          hPutStrLn hwrite []
+          hPutStrLn hwrite "Product Matrix"
+          hPutStrLn hwrite $ matPrettyPrint mat3
+          hPutStrLn hwrite []
+          )
 
         putStrLn "Matrix 1"
         putStrLn $ matPrettyPrint mat1
