@@ -11,12 +11,10 @@ bSortIter :: Array (Integer, Integer) e -> [Integer]
 bSortHelper :: (Ord a, Ix t, Ix t1) =>
        Array (t, t1) a -> [Integer] -> Array (t, t1) a
 
+-- arr/list conversion
 listToArr :: [[a]] -> Array (Integer, Integer) a
+arrToMat :: Array(Integer, Integer) a -> Integer -> [[a]]
 
-listToArr li = arr [((toInteger i, toInteger j), li !! (i-1) !! (j-1)) | i <- [1..d1], j <- [1..d2]]
-  where d1 = length li
-        d2 = length $ head li
-        arr = array ((1,1), (toInteger $ d1, toInteger $ d2)) 
 
 -- main, uses IO monad
 main :: IO ()
@@ -54,7 +52,8 @@ main = withFile "COSC450_P2_Data.txt" ReadMode (\ handle ->
 
         let arr = bSort $ listToArr mat3
 
-        print arr
+        let sortedList = arrToMat arr (toInteger size2)
+
 
         withFile "COSC450_P2_Output.txt" WriteMode (\hwrite ->
           do
@@ -67,7 +66,8 @@ main = withFile "COSC450_P2_Data.txt" ReadMode (\ handle ->
           hPutStrLn hwrite "Product Matrix"
           hPutStrLn hwrite $ matPrettyPrint mat3
           hPutStrLn hwrite []
-          )
+          hPutStrLn hwrite "Sorted Matrix"
+          hPutStrLn hwrite $ matPrettyPrint sortedList)
 
         putStrLn "Matrix 1"
         putStrLn $ matPrettyPrint mat1
@@ -77,7 +77,9 @@ main = withFile "COSC450_P2_Data.txt" ReadMode (\ handle ->
         putStrLn []
         putStrLn "Product Matrix"
         putStrLn $ matPrettyPrint mat3
-        putStrLn [])
+        putStrLn []
+        putStrLn "Sorted Matrix"
+        putStrLn $ matPrettyPrint sortedList)
 
 wordsToInteger = map (\a -> read a :: Integer)
 
@@ -118,3 +120,12 @@ wordSplit s = case dropWhile isSpace s of
   "" -> []
   s' -> w : wordSplit s''
           where (w, s'') = break isSpace s'
+
+listToArr li = arr [((toInteger i, toInteger j), li !! (i-1) !! (j-1)) | i <- [1..d1], j <- [1..d2]]
+  where d1 = length li
+        d2 = length $ head li
+        arr = array ((1,1), (toInteger $ d1, toInteger $ d2)) 
+
+arrToMat arr split = splitNList [ arr ! i | i <- ilist ] (fromIntegral split)
+  where ilist = range $ bounds arr
+
