@@ -16,3 +16,4 @@ cabal.sandbox.config
 *.hp
 
 COSC450_P2_Output.txt
+matmult
