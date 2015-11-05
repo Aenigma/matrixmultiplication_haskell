@@ -11,6 +11,13 @@ bSortIter :: Array (Integer, Integer) e -> [Integer]
 bSortHelper :: (Ord a, Ix t, Ix t1) =>
        Array (t, t1) a -> [Integer] -> Array (t, t1) a
 
+listToArr :: [[a]] -> Array (Integer, Integer) a
+
+listToArr li = arr [((toInteger i, toInteger j), li !! (i-1) !! (j-1)) | i <- [1..d1], j <- [1..d2]]
+  where d1 = length li
+        d2 = length $ head li
+        arr = array ((1,1), (toInteger $ d1, toInteger $ d2)) 
+
 -- main, uses IO monad
 main :: IO ()
 
@@ -44,6 +51,10 @@ main = withFile "COSC450_P2_Data.txt" ReadMode (\ handle ->
         let mat2 = splitNList l2 size2
 
         let mat3 = matMult mat1 mat2
+
+        let arr = bSort $ listToArr mat3
+
+        print arr
 
         withFile "COSC450_P2_Output.txt" WriteMode (\hwrite ->
           do
